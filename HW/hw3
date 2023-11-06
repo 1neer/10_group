@@ -1,0 +1,56 @@
+1.기계 학습에서 학습이란 무엇인지를 정리하시오
+먼저 기계학습에서의 학습이란 훈련 데이터에서 MSE와 같은 손실함수 값을 최소로 하게 하는 가중치 매개변수의 최적값을 자동으로 획득하도록 하는 것입니다.
+여기서 가중치란 각 신호의 영향력을 조절하는 매개변수이며, 손실함수는 현재 신경망이 훈련 데이터를 얼마나 잘 처리하지 못하느냐를 나타내며, 최적의 매개변수값을
+탐색하는 지표입니다.
+
+2.확률적 경사 하강법의 소스 코드를 분석하시오
+n_epochs = 50 : 전체 데이터셋을 몇번 반복해서 학습할지를 결정하는 변수로, 현재의 코드에서는 50번을 반복하게 설정함.
+
+t0, t1 = 5, 50 : 학습스케줄 함수에서 사용되는 하이퍼파라미터인 t0과 t1을 정의함.
+
+def learning_schedule(t):
+    return t0 / (t + t1) : 이 함수는 학습률을 구하는 함수로 리턴값으로 t0 / (t + t1)을 반환함.
+  
+  theta = np.random.randn(2,1) : 초기 가중치를 랜덤으로 초기화함.
+
+  for epoch in range(n_epochs):
+    for i in range(m): : 주어진 에포크 수만큼 반복하고 1에포크당 전체 데이터셋(m)을 사용해서 반복한다.
+
+ random_index = np.random.randint(m)
+        xi = X_b[random_index:random_index+1]
+        yi = y[random_index:random_index+1] : 무작위로 데이터를 선택하기 위해 0부터 m-1 사이의 랜덤한 정수를 선택한 뒤,
+  선택된 랜덤인덱스에 해당하는 입력데이터와 타겟 데이터를 선택한다.
+ 
+  gradients = 2 * xi.T.dot(xi.dot(theta) - yi): gradient를 구한다. 여기서 xi.dot(theta) - yi는 예측값과 실제값의 차이고, 2 * xi.T.dot 는 예측오차를 사용해서 경사를 계산하는 부분이다.
+  eta = learning_schedule(epoch * m + i): 학습률을 업데이트 한다. 여기서 위에 작성한 러닝 스케줄 함수가 사용됨.
+
+  theta = theta - eta * gradients: 마지막으로 경사 하강법을 이용해서 가중치를 업데이트 해준다.
+
+  이것의 전체 코드는 다음과 같다.
+
+n_epochs = 50
+t0, t1 = 5, 50  # 학습 스케줄 하이퍼파라미터
+
+def learning_schedule(t):
+    return t0 / (t + t1)
+
+theta = np.random.randn(2,1)  # 랜덤 초기화
+
+for epoch in range(n_epochs):
+  for i in range(m):
+        random_index = np.random.randint(m)
+        xi = X_b[random_index:random_index+1]
+        yi = y[random_index:random_index+1]
+        gradients = 2 * xi.T.dot(xi.dot(theta) - yi)
+        eta = learning_schedule(epoch * m + i)
+        theta = theta - eta * gradients
+
+결국 전체 데이터셋중 랜덤으로 데이터를 선택해 경사하강법을 진행하는 것이 바로 확률적 경사 하강법의 핵심이다.
+  
+
+  
+
+
+  
+  
+
